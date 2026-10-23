@@ -1,0 +1,59 @@
+@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  /* Base surfaces — graphite, not pure black */
+  --color-graphite-950: #0E1013;
+  --color-graphite-900: #15171B;
+  --color-graphite-800: #1C1F24;
+  --color-graphite-700: #262A31;
+  --color-graphite-600: #363B44;
+  --color-graphite-500: #4B515C;
+
+  /* Text */
+  --color-ink-100: #F2F3F5;
+  --color-ink-300: #C7CAD1;
+  --color-ink-500: #8B909C;
+  --color-ink-700: #5B606B;
+
+  /* Accent — used for actions/links only, never health status */
+  --color-accent-400: #4FD1E8;
+  --color-accent-500: #2FB8D6;
+  --color-accent-600: #1F97B3;
+
+  /* Status — reserved exclusively for battery/cell health */
+  --color-status-good: #43B76B;
+  --color-status-good-dim: #2A4E38;
+  --color-status-warn: #D9A441;
+  --color-status-warn-dim: #4E3F22;
+  --color-status-bad: #E5484D;
+  --color-status-bad-dim: #4E2427;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-graphite-950);
+  color: var(--color-ink-100);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-accent-500);
+  color: var(--color-graphite-950);
+}
+
+@media print {
+  nav, .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+    color: black;
+  }
+}
