@@ -1,6 +1,6 @@
 # 🔋 Digital Battery Passport
 
-**A QR-code passport for second-hand EV and e-rickshaw batteries — health tracked cell by cell, with a history that can't be quietly rewritten.**
+**A QR-code passport for second-hand EV and e-rickshaw batteries: health tracked cell by cell, with a history that can't be quietly rewritten.**
 
 [![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://battery-passport-eight.vercel.app)
 ![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
@@ -36,7 +36,7 @@ The battery is one of the most valuable parts of a used EV, yet a buyer has no r
 
 ## The idea
 
-Every battery gets a permanent record behind a QR code. Anyone can scan it — no app, no login — and see who made it, how it has been used, how healthy it is **cell by cell**, and what to do with it next. Technicians add readings; the record can only grow, and any attempt to edit the past is detectable.
+Every battery gets a permanent record behind a QR code. Anyone can scan it, with no app and no login, and see who made it, how it has been used, how healthy it is **cell by cell**, and what to do with it next. Technicians add readings; the record can only grow, and any attempt to edit the past is detectable.
 
 ## Key features
 
@@ -47,6 +47,7 @@ Every battery gets a permanent record behind a QR code. Anyone can scan it — n
 - A "History integrity verified" check that re-computes the record's hash chain
 - Cell journey: a cell reused in another pack keeps its full history, and the old pack's timeline records that it left
 - Honest labels: retro-registered batteries say plainly that earlier usage wasn't recorded
+- Compare two packs side by side
 - Printable certificate, English/Hindi interface, and a "Listen" button that reads the summary aloud (browser text-to-speech)
 
 **For technicians (approved accounts)**
@@ -73,7 +74,7 @@ These are transparent heuristics, not a battery-physics simulation.
 | Price band | Indicative only: new-pack price per kWh × health, ±; not live market data |
 | Forecast | Straight-line trend through the weakest cell's own readings |
 
-The same clearance rule is implemented in the database (`battery_clearance`) and in the browser, so the server — not the page — decides whether a listing is allowed.
+The same clearance rule is implemented in the database (`battery_clearance`) and in the browser, so the server, not the page, decides whether a listing is allowed.
 
 Full formulas and worked rules: **[docs/HOW_IT_WORKS.md](./docs/HOW_IT_WORKS.md)**
 
@@ -95,11 +96,11 @@ Sensitive operations are single server functions, so they are all-or-nothing and
 ## Data integrity and security model
 
 - **Reads are public** (a passport is meant to be checked by anyone). **Writes need an admin-approved technician account**; the first account created becomes admin.
-- **Append-only history.** Readings, usage events, flag events and pack readings cannot be updated or deleted — enforced by database triggers, not only by the UI.
+- **Append-only history.** Readings, usage events, flag events and pack readings cannot be updated or deleted, enforced by database triggers and not only by the UI.
 - **Hash-chained records.** Each reading (per cell) and each usage event (per pack) stores the SHA-256 hash of its content plus the previous record's hash. `verify_battery_integrity` recomputes the chain and reports any edit or gap.
 - **Rules enforced in the database:** cycle counts can't decrease, readings can't be dated in the future or before the previous reading, readings must be recorded against the pack the cell currently belongs to, and values must be in plausible ranges.
 - **Cell reuse** is only allowed from packs you registered (admins: any), and not from a pack with an active listing.
-- **Honest limits:** this is *tamper-evident*, not tamper-proof. Edits and deletions in the middle of a history are detected; deleting only the newest record is not, without anchoring hashes outside the database. The database owner could disable triggers — which the integrity check would then reveal.
+- **Honest limits:** this is *tamper-evident*, not tamper-proof. Edits and deletions in the middle of a history are detected; deleting only the newest record is not, without anchoring hashes outside the database. The database owner could disable triggers, which the integrity check would then reveal.
 
 ## Tech stack
 
@@ -125,7 +126,7 @@ Sensitive operations are single server functions, so they are all-or-nothing and
 │   └── data/           built-in demo data (used only when Supabase isn't configured)
 ├── supabase/           schema.sql and migrations (run in the Supabase SQL Editor)
 ├── demo/               sample CSV files for a full walkthrough
-├── docs/               health logic, CSV format and testing guides
+├── docs/               health logic, CSV format, testing guides and screenshots
 ├── vercel.json         single-page-app rewrite (needed so QR links like /p/DBP-… work)
 └── .env.example
 ```
@@ -154,7 +155,7 @@ Sensitive operations are single server functions, so they are all-or-nothing and
    npm run dev      # http://localhost:5173
    npm run build    # production build
    ```
-6. **Create the admin account.** Sign up on the Login page — the **first** account becomes admin. Later sign-ups wait for approval under *Activity*.
+6. **Create the admin account.** Sign up on the Login page; the **first** account becomes admin. Later sign-ups wait for approval under *Activity*.
 
 Without Supabase credentials the app still opens, showing built-in demo data.
 
