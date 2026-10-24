@@ -173,7 +173,7 @@ Contributions, issues and feature requests are welcome. Fork the repo, create a 
 
 ## 📄 License
 
-Distributed under the MIT License. See `LICENSE` for details.
+Distributed under the Apache License 2.0. See `LICENSE` for details.
 
 ## 👤 Author
 
