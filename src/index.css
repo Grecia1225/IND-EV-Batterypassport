@@ -1,104 +1,141 @@
-import React from 'react';
+@import url('https://googleapis.com');
+@import "tailwindcss";
 
-// Mock data structured identically to the battery cards in your UI screenshot
-const INITIAL_BATTERIES = [
-  {
-    id: "DBP-A3ECC9E",
-    manufacturer: "SunBox",
-    model: "SB-48-30",
-    specs: "4 cells • LFP (LiFePO4) • Other",
-    status: "second-life",
-    statusLabel: "• Second-life"
-  },
-  {
-    id: "DBP-537A07",
-    manufacturer: "AmpWorks",
-    model: "AW-48-24",
-    specs: "4 cells • NMC • E-loader",
-    status: "second-life",
-    statusLabel: "• Second-life"
-  },
-  {
-    id: "DBP-4C2993",
-    manufacturer: "GridCell",
-    model: "GC-48-24",
-    specs: "4 cells • LFP (LiFePO4) • E-rickshaw",
-    status: "healthy",
-    statusLabel: "• Healthy"
-  },
-  {
-    id: "DBP-4ECF94",
-    manufacturer: "VoltEdge Energy",
-    model: "VE-48-30",
-    specs: "4 cells • LFP (LiFePO4) • E-loader",
-    status: "retire",
-    statusLabel: "• Retire"
-  },
-  {
-    id: "DBP-730BC3",
-    manufacturer: "VoltEdge Energy",
-    model: "VE-48-30",
-    specs: "4 cells • LFP (LiFePO4) • E-rickshaw",
-    status: "healthy",
-    statusLabel: "• Healthy"
-  }
-];
+@theme {
+  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 
-export default function RegisteredBatteriesGrid() {
-  
-  // Helper function to dynamically map status states to the restyled CSS classes
-  const getStatusClass = (status) => {
-    switch (status) {
-      case 'healthy':
-        return 'badge-status-good';
-      case 'second-life':
-        return 'badge-status-warn';
-      case 'retire':
-        return 'badge-status-bad';
-      default:
-        return '';
-    }
-  };
+  /* Base surfaces — graphite, not pure black */
+  --color-graphite-950: #0E1013;
+  --color-graphite-900: #15171B;
+  --color-graphite-800: #1C1F24;
+  --color-graphite-700: #262A31;
+  --color-graphite-600: #363B44;
+  --color-graphite-500: #4B515C;
 
-  return (
-    <div className="w-full mt-8">
-      {/* Grid Header */}
-      <h2 className="text-sm font-semibold tracking-wider text-ink-300 font-sans uppercase mb-4">
-        Registered batteries
-      </h2>
+  /* Text */
+  --color-ink-100: #F2F3F5;
+  --color-ink-300: #C7CAD1;
+  --color-ink-500: #8B909C;
+  --color-ink-700: #5B606B;
 
-      {/* Grid Canvas Layer */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-        {INITIAL_BATTERIES.map((battery) => (
-          <div 
-            key={battery.id}
-            className="flex flex-col justify-between p-5 bg-[var(--color-graphite-900)] border border-[var(--color-graphite-800)] rounded-xl transition-all duration-200 hover:border-[var(--color-graphite-700)]"
-          >
-            {/* Top Row: Passport Identifier and Dynamic Status Badge */}
-            <div className="flex items-center justify-between mb-6">
-              <span className="text-xs font-mono font-medium text-ink-500 tracking-wider">
-                {battery.id}
-              </span>
-              <span className={`badge-status ${getStatusClass(battery.status)}`}>
-                {battery.statusLabel}
-              </span>
-            </div>
+  /* Accent — used for actions/links only, never health status */
+  --color-accent-400: #4FD1E8;
+  --color-accent-500: #2FB8D6;
+  --color-accent-600: #1F97B3;
 
-            {/* Bottom Row: Core Manufacturer and Chemical Specification Data */}
-            <div>
-              <h3 className="text-base font-bold text-ink-100 font-sans tracking-tight">
-                {battery.manufacturer}
-              </h3>
-              <p className="text-xs font-mono text-ink-300 mt-0.5">
-                {battery.model}
-              </p>
-              <p className="text-xs font-sans text-ink-500 mt-3 tracking-wide">
-                {battery.specs}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
+  /* Status — reserved exclusively for battery/cell health */
+  --color-status-good: #43B76B;
+  --color-status-good-dim: #2A4E38;
+  --color-status-warn: #D9A441;
+  --color-status-warn-dim: #4E3F22;
+  --color-status-bad: #E5484D;
+  --color-status-bad-dim: #4E2427;
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--color-graphite-950);
+  color: var(--color-ink-100);
+  font-family: var(--font-sans);
+}
+
+::selection {
+  background: var(--color-accent-500);
+  color: var(--color-graphite-950);
+}
+
+/* ==========================================================================
+   TAILWIND v4 UTILITY DIRECTIVES
+   ========================================================================== */
+
+@utility hero-wireframe-container {
+  position: relative;
+  width: 100%;
+  padding: 3rem 2rem;
+  border-radius: 0.75rem;
+  background-color: var(--color-graphite-900);
+  border: 1px solid var(--color-graphite-800);
+  overflow: hidden;
+  background-image: linear-gradient(
+    to right, 
+    var(--color-graphite-900) 0%, 
+    var(--color-graphite-900) 45%, 
+    rgba(21, 23, 27, 0.6) 75%, 
+    rgba(21, 23, 27, 0.1) 100%
   );
+}
+
+@utility hero-wireframe-bg {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 50%;
+  height: 100%;
+  background-size: contain;
+  background-position: center right;
+  background-repeat: no-repeat;
+  opacity: 0.08; 
+  mix-blend-mode: luminosity;
+  pointer-events: none;
+  z-index: 1;
+}
+
+@utility hero-wireframe-content {
+  position: relative;
+  z-index: 2;
+  max-width: 55%;
+}
+
+@utility badge-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: 9999px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  border: 1px solid transparent;
+}
+
+@utility badge-status-good {
+  background-color: var(--color-status-good-dim);
+  color: var(--color-status-good);
+  border-color: rgba(67, 183, 107, 0.2);
+}
+
+@utility badge-status-warn {
+  background-color: var(--color-status-warn-dim);
+  color: var(--color-status-warn);
+  border-color: rgba(217, 164, 65, 0.2);
+}
+
+@utility badge-status-bad {
+  background-color: var(--color-status-bad-dim);
+  color: var(--color-status-bad);
+  border-color: rgba(229, 72, 77, 0.2);
+}
+
+@media print {
+  nav, .no-print {
+    display: none !important;
+  }
+  body {
+    background: white;
+    color: black;
+  }
+  .hero-wireframe-container {
+    background: transparent;
+    border: 1px solid #ccc;
+    background-image: none;
+  }
+  .hero-wireframe-bg {
+    display: none;
+  }
 }
