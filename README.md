@@ -16,25 +16,36 @@
 
 ## 📖 Overview
 
-Battery Passport gives every EV battery pack a traceable digital identity. Technicians register a pack and log cell or pack readings manually, by CSV upload, or directly from a supported Bluetooth BMS. Anyone can then open a pack's **passport** to see its health, provenance and usage history, compare packs side by side, scan a QR code, or browse resale listings.
+Battery Passport gives every EV battery pack a traceable digital identity. Technicians register a pack and log cell readings manually, by CSV upload, or directly from a supported Bluetooth BMS. Anyone can then open a pack's **passport** to see its health, provenance and usage history, compare packs side by side, scan a QR code, or browse resale listings.
 
-It is built to support second-life decisions (reuse, repurposing, resale) with transparent, data-backed battery health instead of guesswork.
+It is built to support second-life decisions (keep in the vehicle, repair, reuse for storage, resell or recycle) with transparent, data-backed battery health instead of guesswork.
 
 ## ✨ Features
 
-- **Battery passport**: per-pack page with health assessment, provenance and usage history
+- **Battery passport**: per-pack page with health, confidence score, degradation forecast and a routing recommendation
 - **Pack registration**: register new packs, each with a shareable QR code
 - **Flexible reading entry**: manual form, CSV import, or live Bluetooth BMS capture
+- **Smart CSV import**: flexible column names, every row validated before saving ([format guide](./docs/CSV_FORMAT.md))
 - **Bluetooth BMS support**: connects over Web Bluetooth and decodes the JBD BMS protocol
-- **Health calculations**: computes pack health from stored readings
+- **Transparent health scoring**: cell and pack State of Health, life stage and flags ([how it works](./docs/HOW_IT_WORKS.md))
 - **Technician dashboard**: fleet-level summaries across all registered packs
 - **Battery directory**: browse and search all packs
-- **Pack comparison**: compare health of multiple packs side by side
-- **Marketplace**: resale listings backed by each pack's health summary
+- **Pack comparison**: compare packs side by side
+- **Marketplace**: resale listings with an indicative fair price band and a health clearance check
 - **QR scanning**: scan a pack's QR code to open its passport
 - **Activity log**: audit trail of changes
 - **Write approval gate**: write actions are restricted to approved users
-- **Demo data fallback**: the app works with sample records when no backend is configured
+- **Demo data fallback**: the app runs on sample records when no backend is configured
+
+## 🔎 Battery Health at a Glance
+
+| Pack State of Health | Stage | What it means |
+|---|---|---|
+| 80% or more | **Healthy** | Continue in vehicle use |
+| 60% to under 80% | **Second-life** | Route to stationary storage (solar, home battery) |
+| Under 60% | **Retire** | Route to recycling |
+
+Pack health is judged by its **weakest cell**, not the average. Each cell's score comes from its cycle count (against the expected life of its chemistry) and its internal resistance. A **confidence score** shows how complete and recent the evidence is. Full details: [docs/HOW_IT_WORKS.md](./docs/HOW_IT_WORKS.md).
 
 ## 🧱 Tech Stack
 
@@ -48,6 +59,21 @@ It is built to support second-life decisions (reuse, repurposing, resale) with t
 | QR | `qrcode` (generate), `jsQR` (scan) |
 | Hardware | Web Bluetooth API (JBD BMS protocol) |
 | Hosting | Vercel |
+
+## 🧭 App Pages
+
+| Route | Page |
+|---|---|
+| `/` | Battery directory |
+| `/p/:id` | Battery passport |
+| `/register` | Register a new pack |
+| `/add-reading` | Add readings (manual, CSV, Bluetooth) |
+| `/dashboard` | Technician dashboard |
+| `/marketplace` | Resale marketplace |
+| `/compare` | Compare packs |
+| `/scan` | Scan a QR code |
+| `/activity` | Activity log |
+| `/login` | Sign in |
 
 ## 🏗️ Architecture
 
@@ -99,7 +125,7 @@ flowchart TD
 ### Prerequisites
 
 - Node.js 18+ and npm
-- A [Supabase](https://supabase.com) project (optional, the app falls back to demo data without one)
+- A [Supabase](https://supabase.com) project (optional, the app runs on demo data without one)
 - A Chromium-based browser (Chrome, Edge) if you want to use Bluetooth BMS capture
 
 ### Installation
@@ -112,8 +138,6 @@ npm install
 
 ### Environment variables
 
-Copy the example file and fill in your Supabase credentials:
-
 ```bash
 cp .env.example .env
 ```
@@ -123,11 +147,13 @@ VITE_SUPABASE_URL=your-supabase-project-url
 VITE_SUPABASE_ANON_KEY=your-supabase-anon-key
 ```
 
+If these are not set, the app still loads and falls back to demo data. Backend calls fail gracefully until real credentials are added.
+
 > ⚠️ Never commit your real `.env` file. Only the anon (public) key belongs in the frontend.
 
 ### Database
 
-Apply the schema in the [`supabase/`](./supabase) folder to your Supabase project (via the SQL editor or the Supabase CLI).
+Run the SQL files from the [`supabase/`](./supabase) folder in your Supabase project (SQL editor or Supabase CLI) to create the tables and server-side checks.
 
 ### Run locally
 
@@ -147,7 +173,7 @@ npm run preview
 | Method | How |
 |---|---|
 | Manual | Fill in the form on the *Add Reading* page |
-| CSV | Upload a CSV file of cell/pack readings on the *Add Reading* page |
+| CSV | Upload a file on the *Add Reading* page. See the [CSV format guide](./docs/CSV_FORMAT.md) and the [sample file](./docs/sample-readings.csv) |
 | Bluetooth BMS | Connect a supported JBD BMS from the *Add Reading* page and save the live data |
 
 > Bluetooth requires HTTPS (or `localhost`) and a browser with Web Bluetooth support.
@@ -160,11 +186,16 @@ The project is configured for [Vercel](https://vercel.com) (see `vercel.json`):
 2. Add the two `VITE_SUPABASE_*` environment variables
 3. Deploy
 
+## 📚 Documentation
+
+- [How the health assessment works](./docs/HOW_IT_WORKS.md)
+- [CSV import format](./docs/CSV_FORMAT.md)
+- [Sample readings file](./docs/sample-readings.csv)
+
 ## 🗺️ Roadmap
 
-- [ ] Support for additional BMS protocols beyond JBD
+- [ ] Support for more BMS protocols beyond JBD
 - [ ] Exportable PDF passport
-- [ ] Compliance mapping to the Indian battery standards and EU Battery Passport fields
 - [ ] Automated tests and CI
 
 ## 🤝 Contributing
@@ -173,7 +204,7 @@ Contributions, issues and feature requests are welcome. Fork the repo, create a 
 
 ## 📄 License
 
-Distributed under the Apache License 2.0. See `LICENSE` for details.
+Distributed under the Apache License 2.0. See [LICENSE](./LICENSE) for details.
 
 ## 👤 Author
 
