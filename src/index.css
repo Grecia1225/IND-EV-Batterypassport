@@ -1,59 +1,104 @@
-@import url('https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-@import "tailwindcss";
+import React from 'react';
 
-@theme {
-  --font-sans: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
-  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
-
-  /* Base surfaces — graphite, not pure black */
-  --color-graphite-950: #0E1013;
-  --color-graphite-900: #15171B;
-  --color-graphite-800: #1C1F24;
-  --color-graphite-700: #262A31;
-  --color-graphite-600: #363B44;
-  --color-graphite-500: #4B515C;
-
-  /* Text */
-  --color-ink-100: #F2F3F5;
-  --color-ink-300: #C7CAD1;
-  --color-ink-500: #8B909C;
-  --color-ink-700: #5B606B;
-
-  /* Accent — used for actions/links only, never health status */
-  --color-accent-400: #4FD1E8;
-  --color-accent-500: #2FB8D6;
-  --color-accent-600: #1F97B3;
-
-  /* Status — reserved exclusively for battery/cell health */
-  --color-status-good: #43B76B;
-  --color-status-good-dim: #2A4E38;
-  --color-status-warn: #D9A441;
-  --color-status-warn-dim: #4E3F22;
-  --color-status-bad: #E5484D;
-  --color-status-bad-dim: #4E2427;
-}
-
-html {
-  color-scheme: dark;
-}
-
-body {
-  background: var(--color-graphite-950);
-  color: var(--color-ink-100);
-  font-family: var(--font-sans);
-}
-
-::selection {
-  background: var(--color-accent-500);
-  color: var(--color-graphite-950);
-}
-
-@media print {
-  nav, .no-print {
-    display: none !important;
+// Mock data structured identically to the battery cards in your UI screenshot
+const INITIAL_BATTERIES = [
+  {
+    id: "DBP-A3ECC9E",
+    manufacturer: "SunBox",
+    model: "SB-48-30",
+    specs: "4 cells • LFP (LiFePO4) • Other",
+    status: "second-life",
+    statusLabel: "• Second-life"
+  },
+  {
+    id: "DBP-537A07",
+    manufacturer: "AmpWorks",
+    model: "AW-48-24",
+    specs: "4 cells • NMC • E-loader",
+    status: "second-life",
+    statusLabel: "• Second-life"
+  },
+  {
+    id: "DBP-4C2993",
+    manufacturer: "GridCell",
+    model: "GC-48-24",
+    specs: "4 cells • LFP (LiFePO4) • E-rickshaw",
+    status: "healthy",
+    statusLabel: "• Healthy"
+  },
+  {
+    id: "DBP-4ECF94",
+    manufacturer: "VoltEdge Energy",
+    model: "VE-48-30",
+    specs: "4 cells • LFP (LiFePO4) • E-loader",
+    status: "retire",
+    statusLabel: "• Retire"
+  },
+  {
+    id: "DBP-730BC3",
+    manufacturer: "VoltEdge Energy",
+    model: "VE-48-30",
+    specs: "4 cells • LFP (LiFePO4) • E-rickshaw",
+    status: "healthy",
+    statusLabel: "• Healthy"
   }
-  body {
-    background: white;
-    color: black;
-  }
+];
+
+export default function RegisteredBatteriesGrid() {
+  
+  // Helper function to dynamically map status states to the restyled CSS classes
+  const getStatusClass = (status) => {
+    switch (status) {
+      case 'healthy':
+        return 'badge-status-good';
+      case 'second-life':
+        return 'badge-status-warn';
+      case 'retire':
+        return 'badge-status-bad';
+      default:
+        return '';
+    }
+  };
+
+  return (
+    <div className="w-full mt-8">
+      {/* Grid Header */}
+      <h2 className="text-sm font-semibold tracking-wider text-ink-300 font-sans uppercase mb-4">
+        Registered batteries
+      </h2>
+
+      {/* Grid Canvas Layer */}
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        {INITIAL_BATTERIES.map((battery) => (
+          <div 
+            key={battery.id}
+            className="flex flex-col justify-between p-5 bg-[var(--color-graphite-900)] border border-[var(--color-graphite-800)] rounded-xl transition-all duration-200 hover:border-[var(--color-graphite-700)]"
+          >
+            {/* Top Row: Passport Identifier and Dynamic Status Badge */}
+            <div className="flex items-center justify-between mb-6">
+              <span className="text-xs font-mono font-medium text-ink-500 tracking-wider">
+                {battery.id}
+              </span>
+              <span className={`badge-status ${getStatusClass(battery.status)}`}>
+                {battery.statusLabel}
+              </span>
+            </div>
+
+            {/* Bottom Row: Core Manufacturer and Chemical Specification Data */}
+            <div>
+              <h3 className="text-base font-bold text-ink-100 font-sans tracking-tight">
+                {battery.manufacturer}
+              </h3>
+              <p className="text-xs font-mono text-ink-300 mt-0.5">
+                {battery.model}
+              </p>
+              <p className="text-xs font-sans text-ink-500 mt-3 tracking-wide">
+                {battery.specs}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
 }
