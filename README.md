@@ -2,18 +2,6 @@
 
 **A QR-code passport for second-hand EV and e-rickshaw batteries: health tracked cell by cell, with a history that can't be quietly rewritten.**
 
-[![Live Demo](https://img.shields.io/badge/demo-live-brightgreen)](https://battery-passport-eight.vercel.app)
-![React](https://img.shields.io/badge/React-19-61DAFB?logo=react&logoColor=white)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.6-3178C6?logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-8-646CFF?logo=vite&logoColor=white)
-![Tailwind CSS](https://img.shields.io/badge/Tailwind-4-06B6D4?logo=tailwindcss&logoColor=white)
-![Supabase](https://img.shields.io/badge/Supabase-backend-3ECF8E?logo=supabase&logoColor=white)
-![Deployed on Vercel](https://img.shields.io/badge/Vercel-deployed-000000?logo=vercel&logoColor=white)
-
-**Live demo:** https://battery-passport-eight.vercel.app
-
----
-
 ## Screenshots
 
 | Fleet dashboard | Passport (healthy pack) |
@@ -192,7 +180,7 @@ cell_id,voltage_v,resistance_mohm,temperature_c,cycle_count,recorded_at
 
 Dates may be `YYYY-MM-DD` or `DD/MM/YYYY`. Rows are validated before saving, and the database has the final say. All accepted header names and limits: **[docs/CSV_FORMAT.md](./docs/CSV_FORMAT.md)**
 
-## Limitations (stated plainly)
+## Limitations 
 
 - **Real BMS data needs manufacturer cooperation.** Each BMS family uses its own protocol. One adapter (JBD / Xiaoxiang) is implemented and has been tested against protocol sample frames, not yet against a physical board. Other brands need their own adapter.
 - **Data is only as good as who enters it** until a live BMS feed exists. Readings from CSV or manual entry carry that source label.
